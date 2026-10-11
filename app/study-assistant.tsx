@@ -174,6 +174,7 @@ export default function StudyAssistant() {
     catch (setupError) { return { supabase: null, configError: setupError instanceof Error ? setupError.message : 'Supabase environment variables are missing.' }; }
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  const userId = user?.id;
   const [authLoading, setAuthLoading] = useState(!configError);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileComplete, setProfileComplete] = useState(false);
@@ -222,7 +223,7 @@ export default function StudyAssistant() {
   }, [supabase]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
     let active = true;
     void (async () => {
       await Promise.resolve();
@@ -242,7 +243,7 @@ export default function StudyAssistant() {
       }
     })();
     return () => { active = false; };
-  }, [user]);
+  }, [userId]);
 
   const loadConversations = useCallback(async () => {
     const response = await fetch('/api/conversations');
