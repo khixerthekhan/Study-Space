@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudySpace AI
 
-## Getting Started
+An academic assistant for assignments, quizzes, research, journal articles, presentations, and career guidance. Student accounts, chat history, course materials, quiz progress, and generated documents are stored privately with Supabase.
 
-First, run the development server:
+## Set up Supabase
+
+1. Create a Supabase project.
+2. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from the project API settings. Add the Groq and Google AI keys for the providers you use. `TAVILY_API_KEY` enables web search.
+3. Apply every SQL file in `supabase/migrations` in timestamp order in the Supabase SQL editor or through the Supabase CLI. These create the student profile, private storage, presentations, and profile onboarding schema.
+4. In Supabase Auth settings, configure the local and deployed site URLs and add `/auth/callback` to the allowed redirect URLs. Enable Google under Auth providers and configure its OAuth credentials to offer Google sign-in.
+
+The migration creates the profile, chat, message, material, quiz, and artifact tables with row-level security. It also creates a private `student-files` bucket. Do not put service-role keys in browser-visible environment variables.
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000), create a student account, and sign in. Uploaded files are limited to 10 MB each and supported formats are PNG/JPG, TXT, PDF, and DOCX. Images are interpreted with Gemini; the image-analysis path requires `GOOGLE_GENERATIVE_AI_API_KEY`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Word and PDF files are generated only after the student explicitly requests one in chat. The resulting file is saved in the student's private storage and can be downloaded from the conversation.
